@@ -6,10 +6,6 @@ import sys
 #  Author: Leonel Morejon
 #  Date: 28/07/2016
 
-class Generic_Interruption(Exception):
-	"""A Generic Interruption for the functions..."""
-	pass		
-
 
 def particle_id(arg_id=7):
 	''' Returns a particle id based on the arg_idument. 
@@ -106,6 +102,72 @@ def test_sdist():
 	print sdist(dimmension='volume')
 
 
+def pdist(dimmension='pencilbeam', dir=[0,0,1], **kwargs):
+	''' Returns a distribution for the momenta of the source.
+		Default value is unidirectional ('pencil') oriented to tx=0,ty=0,tz=1
+		It can interpret different inputs, like 'isotropic', 'x','y','z' as orientations.
+		It can also take a matrix of shape (n x 3) of vectors representing the momenta spectrum 
+		The parameters are structured as follows:
+		  
+		  dimmension: Any of value ('pencilbeam', 'isotropic')
+		  
+		  ptype: Any of value ('gaussian', 'custom')
+
+		Example:
+		  pdist('point', dir=(-1,0,0)) -> (-1,0,0)
+		  pdist('dirint', dir=(-1,0,0)) -> (-1,0,0)
+		  provide further examples....
+	'''
+	
+	# !!! It needs to be defined what will be the output of this function in general
+	# !!! For the moment returns a dictionary of parameters
+
+	if dimmension not in ('pencilbeam', 'isotropic'):
+		
+		# implement smart recognition for incomplete or mistyped arguments
+
+		print "Error: Unknown value for dimmension. Choose between ('pencilbeam','isotropic')" \
+			  " or leave it unset to use the default value ('pencilbeam')."
+		sys.exit ()
+
+	elif dimmension == 'pencilbeam':	
+
+		# select a dimmension based on provided kwargs (when dimmension not provided)
+
+		parameters = {'dir':dir};
+
+	elif dimmension == 'isotropic':
+		# determine stype if given
+	# 	if 'stype' not in kwargs.keys():
+	# 		print "Error: argument 'stype' not given. Choose between ('plane')"
+	# 		sys.exit()
+	# 	if kwargs['stype'] == 'plane':			
+	# 		if 'nvector' not in kwargs.keys(): 
+	# 			nvector = [0,0,1]
+	# 		else:
+	# 			nvector = kwargs['nvector']				
+	# 		parameters = {'pos':pos, 'nvector':nvector}
+	# 	else:
+	# 		print "Sorry, stype='{0}' not implemented yet.".format(kwargs['stype'])
+	# 		sys.exit()
+
+	# elif dimmension == 'volume':
+	# 	print "Sorry, dimmension='{0}' not implemented yet.".format(dimmension)
+	# 	sys.exit()
+
+	return parameters
+
+
+def test_sdist():
+	# print sdist(dimmension='wrong_value') # Should stop with error; tested and working properly 
+	print pdist()
+	print pdist(dimmension='surface', stype='plane')
+	print pdist(dimmension='surface', stype='sphere')
+	print pdist(dimmension='volume')
+
 
 test_particle_id()
 test_sdist()
+pdist()
+
+print "the dir is",dir()
