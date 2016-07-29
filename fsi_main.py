@@ -42,8 +42,8 @@ def test_particle_id():
 def sdist(dimmension='point', pos=[0,0,0], **kwargs):
 	''' Returns a distribution for the spatial extension of the source.
 		Default value is point source ('point') located in x=0,y=0,z=0
-		It can interpret different inputs, like 'point', (3,4,5) as (x,y,z) position of source,
-		or 'surface' and 'sphere' to get a source emmiting from a sphere's surface,
+		It can interpret different inputs, like 'point', (3,4,5) as (x,y,z) position of source
+		in cm; or 'surface' and 'sphere' to get a source emmiting from a sphere's surface,
 		or 'volume' and 'sphere' to get a source emmiting from a sphere's volume, etc.
 		The parameters are structured as follows:
 		  
@@ -122,7 +122,7 @@ def pdist(dimmension='pencilbeam', dir=[0,0,1], **kwargs):
 	# !!! It needs to be defined what will be the output of this function in general
 	# !!! For the moment returns a dictionary of parameters
 
-	if dimmension not in ('pencilbeam', 'isotropic'):
+	if dimmension not in ('pencilbeam', 'isotropic', 'custom'):
 		
 		# implement smart recognition for incomplete or mistyped arguments
 
@@ -130,44 +130,95 @@ def pdist(dimmension='pencilbeam', dir=[0,0,1], **kwargs):
 			  " or leave it unset to use the default value ('pencilbeam')."
 		sys.exit ()
 
-	elif dimmension == 'pencilbeam':	
+	elif dimmension == 'pencilbeam':
 
 		# select a dimmension based on provided kwargs (when dimmension not provided)
 
-		parameters = {'dir':dir};
+		parameters = {'dimmension':dimmension, 'dir':dir};
 
 	elif dimmension == 'isotropic':
-		# determine stype if given
-	# 	if 'stype' not in kwargs.keys():
-	# 		print "Error: argument 'stype' not given. Choose between ('plane')"
-	# 		sys.exit()
-	# 	if kwargs['stype'] == 'plane':			
-	# 		if 'nvector' not in kwargs.keys(): 
-	# 			nvector = [0,0,1]
-	# 		else:
-	# 			nvector = kwargs['nvector']				
-	# 		parameters = {'pos':pos, 'nvector':nvector}
-	# 	else:
-	# 		print "Sorry, stype='{0}' not implemented yet.".format(kwargs['stype'])
-	# 		sys.exit()
 
-	# elif dimmension == 'volume':
-	# 	print "Sorry, dimmension='{0}' not implemented yet.".format(dimmension)
-	# 	sys.exit()
+		parameters = {'dimmension':dimmension};
+
+	elif dimmension == 'custom':
+		print "Sorry, dimmension='{0}' not implemented yet.".format(dimmension)
+		sys.exit()
 
 	return parameters
 
 
-def test_sdist():
+def test_pdist():
 	# print sdist(dimmension='wrong_value') # Should stop with error; tested and working properly 
 	print pdist()
-	print pdist(dimmension='surface', stype='plane')
-	print pdist(dimmension='surface', stype='sphere')
-	print pdist(dimmension='volume')
+	print pdist(dimmension='pencilbeam', dir=[0,0,-1])
+	print pdist(dimmension='isotropic')
+	print pdist(dimmension='custom')
 
+
+def edist(etype='monoenergetic', kinetic=True, mean=1e-3, width=0, **kwargs):
+	''' Returns a distribution for the energy of the source.
+		Default value is a monoenergetic source ('monoenergetic') of kinetic energy ('kinetic')
+		and of energy 1MeV.
+		It can interpret different inputs, like 'flat', 'gaussian', or even SymPy expressions.
+		The parameters are structured as follows:
+		  
+		  etype: Any of value ('monoenergetic', 'flat', 'gaussian', 'function', 'data')
+		  
+		  kinetic: True or False for kinetic energy vs total energy. By default is True
+
+		  mean: The mean value of energy in GeV. By default 1MeV
+
+		  width: The mean width of the function. Relevant for 'flat' and 'gaussian' types.
+		         By default is 0.
+
+		Examples:
+
+		  edist() -> {'etype':'monoenergetic', 'kinetic':True, 'mean':1e-3, 'width':0}
+
+		  edist(etype='flat', width=5e-4) -> {'etype':'flat', 'kinetic':True, 'mean':1e-3, 'width':5e-4}
+
+		  provide further examples....
+	'''
+	
+	# !!! It needs to be defined what will be the output of this function in general
+	# !!! For the moment returns a dictionary of parameters
+
+	if etype not in ('monoenergetic', 'flat', 'gaussian', 'function', 'data'):
+		
+		# implement smart recognition for incomplete or mistyped arguments
+
+		print "Error: Unknown value for etype. Choose between ('monoenergetic', 'flat',"\
+			  " 'gaussian', 'function', 'data') or leave it unset to use the default value ('point')."
+		sys.exit ()
+
+	elif etype in ('monoenergetic', 'flat'):	
+
+		parameters = {'etype':etype, 'kinetic':kinetic, 'mean':mean, 'width':width}
+
+	elif etype == 'gaussian':
+		# determine sigma if given
+		if 'sigma' not in kwargs.keys():
+			print "Warning: Argument 'sigma' not given, mean={0} taken instead".format(mean)
+			sigma = mean
+		
+		parameters = {'etype':etype, 'kinetic':kinetic, 'mean':mean, 'sigma':sigma}			
+
+	elif etype in ('function', 'data'):
+		print "Sorry, etype='{0}' not implemented yet.".format(etype)
+		sys.exit()
+
+	return parameters
+
+
+def test_edist():
+	print edist()
+	print edist(etype='monoenergetic')
+	print edist(etype='flat', mean=1)
+	print edist(etype='function')
+	print edist(etype='data')
+	pass
 
 test_particle_id()
-test_sdist()
-pdist()
-
-print "the dir is",dir()
+# test_sdist()
+# test_pdist()
+test_edist()
