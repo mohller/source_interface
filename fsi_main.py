@@ -146,7 +146,6 @@ def pdist(dimmension='pencilbeam', dir=[0,0,1], **kwargs):
 
 	return parameters
 
-
 def test_pdist():
 	# print sdist(dimmension='wrong_value') # Should stop with error; tested and working properly 
 	print pdist()
@@ -209,7 +208,6 @@ def edist(etype='monoenergetic', kinetic=True, mean=1e-3, width=0, **kwargs):
 
 	return parameters
 
-
 def test_edist():
 	print edist()
 	print edist(etype='monoenergetic')
@@ -217,6 +215,8 @@ def test_edist():
 	print edist(etype='function')
 	print edist(etype='data')
 	pass
+
+
 
 test_particle_id()
 # test_sdist()
