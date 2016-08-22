@@ -5,8 +5,6 @@ import pint
 
 import scipy.stats as st
 from scipy.interpolate import griddata
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
 
 un = pint.UnitRegistry()
 
@@ -25,7 +23,7 @@ default_units = ('cm',)*3 + ('dimensionless',)*3 + ('GeV','dimensionless')
 				 # 'E':'GeV',  'w':'adim'}
 
 
-####-------- Functions to characterize source and report on it
+#### ------- Functions to characterize source and report on it
 def dircosines_surf(sourcefileobject,**kwargs):
 	''' Returns the surface plot of the source
 		takes all kwargs needed for the plot_surface
@@ -50,7 +48,7 @@ def dircosines_surf(sourcefileobject,**kwargs):
 
 
 
-####--------Class for source files
+#### ------- Class for source files
 class Source_File(object):
 	"""Placeholder class for external source files
 	   provided and by external codes.
