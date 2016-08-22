@@ -7,6 +7,8 @@ import sys
 #  Date: 28/07/2016
 
 
+default_dimmensions = ('point', 'surface', 'volume', 'custom')
+
 def particle_id(arg_id=7):
 	''' Returns a particle id based on the arg_idument. 
 		Default value is 7 ('gamma')
@@ -19,10 +21,10 @@ def particle_id(arg_id=7):
 		  particle('p') -> 
 	'''
 
-	if   arg_id in ('p', 'proton', 1): 			pid = 1;
+	if   arg_id in ('p', 'proton', 1): 				pid = 1;
 	elif arg_id in ('e', 'electron', 'e-', 3):		pid = 3;
 	elif arg_id in ('e+', 'positron', 4):			pid = 4;
-	elif arg_id in ('g', 'gamma', 'photon', 7):	pid = 7;
+	elif arg_id in ('g', 'gamma', 'photon', 7):		pid = 7;
 	elif arg_id in ('n', 'neutron', 8): 			pid = 8;
 	else:		
 		pid = None
@@ -59,7 +61,7 @@ def sdist(dimmension='point', pos=[0,0,0], **kwargs):
 	# !!! It needs to be defined what will be the output of this function in general
 	# !!! For the moment returns a dictionary of parameters
 
-	if dimmension not in ('point', 'surface', 'volume'):
+	if dimmension not in default_dimmensions:
 		
 		# implement smart recognition for incomplete or mistyped arguments
 
