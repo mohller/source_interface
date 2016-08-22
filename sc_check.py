@@ -4,7 +4,6 @@ import sys
 import pint
 
 import scipy.stats as st
-from scipy.interpolate import griddata
 
 un = pint.UnitRegistry()
 
@@ -16,36 +15,12 @@ un = pint.UnitRegistry()
 
 epsilon = 1e-200 # tolerance for cosines square sum
 
+# default_magnitudes = ('pid','x','y','z','tx','ty','tz','E','w')
 default_magnitudes = ('x','y','z','tx','ty','tz','E','w')
 default_units = ('cm',)*3 + ('dimensionless',)*3 + ('GeV','dimensionless')
 # default_units = {'x':'cm',   'y':'cm',   'z':'cm',
 				# 'tx':'adim','ty':'adim','tz':'adim',
 				 # 'E':'GeV',  'w':'adim'}
-
-
-#### ------- Functions to characterize source and report on it
-def dircosines_surf(sourcefileobject,**kwargs):
-	''' Returns the surface plot of the source
-		takes all kwargs needed for the plot_surface
-	'''
-	x = 2*np.random.rand(14) - 1
-	y = 2*np.random.rand(14) - 1
-	z = 2*np.random.rand(14) - 1
-
-	x = sourcefileobject.data['tx'].magnitude
-	y = sourcefileobject.data['ty'].magnitude
-	z = sourcefileobject.data['tz'].magnitude
-
-	grid_x, grid_y = np.mgrid[min(x):max(x):100j, min(y):max(y):100j]
-
-	grid_z = griddata((x, y), z, (grid_x, grid_y), method='cubic')
-
-	fig = plt.figure()
-	ax = fig.gca(projection='3d',**kwargs)
-	ax.plot_surface(grid_x, grid_y, grid_z, cmap=plt.cm.Spectral,**kwargs)
-
-	return ax
-
 
 
 #### ------- Class for source files
@@ -61,6 +36,7 @@ class Source_File(object):
 		self.magnitudes = ()
 		self.units = ()
 
+		# Set description parameters
 		self.particle = 'unknown'
 
 		# distribution functions: uniform by default
@@ -69,20 +45,24 @@ class Source_File(object):
 		e_dist = st.uniform() # energy distribution function
 
 	def import_file(self, *args, **kwargs):
-		# assuming the file contains a set of columns
-		# this is just a wrapper for genfromtxt
-		# with some post processing of the sourcefile data
+		''' Assuming the file contains a set of columns. 
+			This is just a wrapper for genfromtxt with some post 
+			processing of the sourcefile data. In other words
+			it accepts all the same arguments as genfromtxt
+			(see http://docs.scipy.org/doc/numpy/reference/generated/numpy.genfromtxt.html) 
+		'''
 		matrix = np.genfromtxt(self.filename, *args, **kwargs)
-		self.ms = range(matrix.shape[1])
+
+		matrix = matrix.transpose() # to have columns into rows
+
+		for mag,u,vals in zip(self.magnitudes, self.units, matrix):
+			unit = un.Quantity(u) # choose the units from un
+			self.data[mag] = vals * unit
 
 		# check consistency between magitudes, units and the 
 		# columns in the file imported
 
-		# for mag,un in zip(magnitudes,units):
-		for i in range(matrix.shape[1]): # for each column
-			unit = un.Quantity(self.units[i]) # choose the units from un
-			magn = self.magnitudes[i]
-			self.data[magn] = matrix[:,i] * unit
+		# call methods to set source description parameters: e.g. point, monochromatic, etc
 
 	def set_magnitudes(self, magnitudes):
 		# set a list of magnitudes which refer to the columns in the file

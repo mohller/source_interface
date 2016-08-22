@@ -33,8 +33,6 @@ def dircosines_surf(sourcefileobject,**kwargs):
 	ax = fig.gca(projection='3d',**kwargs)
 	ax.plot_surface(grid_x, grid_y, grid_z, cmap=plt.cm.Spectral,**kwargs)
 
-	return ax
-
 
 def plot_spatial_distribution(source):
     f, axarr = plt.subplots(1,3,sharey=True, figsize=(18,5));    
