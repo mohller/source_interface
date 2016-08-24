@@ -36,8 +36,16 @@ class Source_File(object):
 		self.magnitudes = ()
 		self.units = ()
 
-		# Set description parameters
-		self.particle = 'unknown'
+		# Initialize description dictionary ...
+		self.description = {'parID' : 'unknown',
+							'sdist' : 'point',
+							'pdist' : 'pencilbeam',
+							'edist' : 'monoenergetic'}
+		# ... and assign given values
+		for k in self.description: 
+			if k in kwargs:
+				self.description[k] = kwargs[k];
+
 
 		# distribution functions: uniform by default
 		s_dist = st.uniform() # spatial distribution function 
@@ -127,4 +135,3 @@ class Source_File(object):
 		# the + sign in front of positive numbers could be problematic
 		# in that case, a simple function using re to change '   +' into '    ' should work
 		np.savetxt('source_file.dat', export_array, fmt="%+15.8e", delimiter='   ')
-	
