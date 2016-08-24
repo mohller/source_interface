@@ -84,10 +84,21 @@ class Source_File(object):
 			unit = un.Quantity(u) # choose the units from un
 			self.data[mag] = vals * unit
 
+		# call methods to convert from non-standard to standard magnitudes
+		if set( ('Bx','By','Bz') ).issubset(default_magnitudes):
+			B = np.sqrt(self.data['Bx']**2 + self.data['By']**2 + self.data['Bz']**2)
+			
+			sef.data['tx'] = self.data['Bx'] / B
+			sef.data['ty'] = self.data['By'] / B
+			sef.data['tz'] = self.data['Bz'] / B
+
+			self.check_cosines()
+
 		# check consistency between magitudes, units and the 
 		# columns in the file imported
 
 		# call methods to set source description parameters: e.g. point, monochromatic, etc
+
 
 	def set_magnitudes(self, magnitudes):
 		# set a list of magnitudes which refer to the columns in the file
@@ -152,3 +163,5 @@ class Source_File(object):
 		# the + sign in front of positive numbers could be problematic
 		# in that case, a simple function using re to change '   +' into '    ' should work
 		np.savetxt('source_file.dat', export_array, fmt="%+15.8e", delimiter='   ')
+	
+
