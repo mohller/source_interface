@@ -23,6 +23,23 @@ default_units = ('cm',)*3 + ('dimensionless',)*3 + ('GeV','dimensionless')
 				 # 'E':'GeV',  'w':'adim'}
 
 
+
+
+def guess_sdist(pos_dict):
+	'''Test function to determine the spatial distribution
+		of the source. It takes a dictionary with the same
+		structure as data in the source object, that contains
+		only the 'x','y','z' values
+	'''
+	for k in pos_dict:
+		if np.all(pos_dict[k] == pos_dict[k][0]):
+			pos_dict[k] = pos_dict[k][0]
+
+	return pos_dict
+
+
+
+
 #### ------- Class for source files
 class Source_File(object):
 	"""Placeholder class for external source files

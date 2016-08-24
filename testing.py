@@ -27,3 +27,7 @@ ax = dircosines_surf(source)
 plt.show()
 
 # todo bien hasta aqui
+
+print source.data['z']
+res = guess_sdist( dict((k,source.data[k]) for k in source.data) )
+print res['z']
